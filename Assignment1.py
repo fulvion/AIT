@@ -1,3 +1,4 @@
+import numpy as np
 
 class Bayes:
     def __init__(self, hypos, priors, obs, likelihood):
@@ -28,8 +29,10 @@ class Bayes:
     
     
     def compute_posterior(self, observations):
-        #TODO
-        posterior = None
+        posterior = [1 for i in range(len(self.hypothesis))]
+        for o in observations:
+            current_p = self.single_posterior_update(o, self.priors)
+            posterior = np.multiply(posterior, current_p)
         return posterior
 
 if __name__ == '__main__':
@@ -41,16 +44,22 @@ if __name__ == '__main__':
 
     b = Bayes(hypos, priors, obs, likelihood)
 
-    l = b.likelihood("vanilla", "Bowl1")
-    print("likelihood(vanilla, Bowl1) = %s " % l)
+    with open("group_40.txt", "w") as text_file:
+        l = b.likelihood("vanilla", "Bowl1")
+        print("likelihood(vanilla, Bowl1) = %s " % l)
+        text_file.write("likelihood(vanilla, Bowl1) = %s \n" % l)
 
-    n_c = b.norm_constant("vanilla")
-    print("normalizing constant for vanilla: %s" % n_c)
+        n_c = b.norm_constant("vanilla")
+        print("normalizing constant for vanilla: %s" % n_c)
+        text_file.write("normalizing constant for vanilla: %s\n" % n_c)
 
-    p_1 = b.single_posterior_update("vanilla", [0.5, 0.5])
-    print("vanilla - posterior: %s" % p_1)
+        p_1 = b.single_posterior_update("vanilla", [0.5, 0.5])
+        print("vanilla - posterior: %s" % p_1)
+        text_file.write("vanilla - posterior: %s\n" % p_1)
 
-    p_2 = b.compute_posterior(["chocolate", "vanilla"])
-    print("chocolate, vanilla - posterior: %s" % p_2)
+        p_2 = b.compute_posterior(["chocolate", "vanilla"])
+        print("chocolate, vanilla - posterior: %s" % p_2)
+        text_file.write("chocolate, vanilla - posterior: %s\n" % p_2)
 
+        text_file.close()
         
